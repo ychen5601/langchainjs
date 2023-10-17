@@ -35,9 +35,13 @@ export class ConversationTokenBufferMemory extends BaseChatMemory
     implements ConversationTokenBufferMemoryInput {
 
     humanPrefix = "Human";
+
     aiPrefix = "AI";
+
     memoryKey = "history";
+
     maxTokenLimit = 2000; // Default max token limit of 2000 which can be overridden
+    
     llm: BaseLanguageModel;
 
     constructor(fields: ConversationTokenBufferMemoryInput) {
@@ -90,12 +94,12 @@ export class ConversationTokenBufferMemory extends BaseChatMemory
         await super.saveContext(inputValues, outputValues);
 
         // Prune buffer if it exceeds the max token limit set for this instance.
-        let buffer = await this.chatHistory.getMessages();
+        const buffer = await this.chatHistory.getMessages();
         let currBufferLength = await this.llm.getNumTokens(
             getBufferString(buffer, this.humanPrefix, this.aiPrefix));
         
         if (currBufferLength > this.maxTokenLimit) {
-            let prunedMemory = [];
+            const prunedMemory = [];
             while (currBufferLength > this.maxTokenLimit) {
                 prunedMemory.push(buffer.shift())
                 currBufferLength = await this.llm.getNumTokens(
