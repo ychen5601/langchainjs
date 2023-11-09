@@ -9,11 +9,12 @@ import { ChatMessageHistory } from "../../stores/message/in_memory.js";
 import { HumanMessage, AIMessage } from "../../schema/index.js";
 import { BufferWindowMemory } from "../buffer_window_memory.js";
 
-
 test("Test buffer window memory with LLM", async () => {
+  const memory = new ConversationTokenBufferMemory({
+    llm: new OpenAI(),
+    maxTokenLimit: 10,
+  });
 
-  const memory = new ConversationTokenBufferMemory({llm: new OpenAI(), maxTokenLimit: 10});
-  
   const result1 = await memory.loadMemoryVariables({});
   expect(result1).toStrictEqual({ history: "" });
 
@@ -30,7 +31,6 @@ test("Test buffer window memory with LLM", async () => {
 });
 
 test("Test buffer memory with LLM chain", async () => {
-
   const model = new OpenAI({ modelName: "gpt-3.5-turbo", temperature: 0 });
 
   const memory = new ConversationTokenBufferMemory({
@@ -53,7 +53,7 @@ test("Test buffer memory with LLM chain", async () => {
   await conversationWithSummary.predict({ input: "Hi, what's up?" });
 
   const result1 = await memory.loadMemoryVariables({});
-  console.log({result1});
+  console.log({ result1 });
   const expectedString1 = "Human: Hi, what's up?\nAI:";
   expect(result1).toStrictEqual({ history: expectedString1 });
 
@@ -61,7 +61,7 @@ test("Test buffer memory with LLM chain", async () => {
 
   // await conversationWithSummary.predict({ input: "For LangChain! Have you heard of it?" });
 
-  // await conversationWithSummary.predict({ 
-  //   input: "Haha nope, although a lot of people confuse it for that" 
+  // await conversationWithSummary.predict({
+  //   input: "Haha nope, although a lot of people confuse it for that"
   // });
 });
